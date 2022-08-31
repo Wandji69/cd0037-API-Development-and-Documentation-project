@@ -86,36 +86,39 @@ def create_app(test_config=None):
 
     @app.route('/questions')
     def get_questions():
-        current_cat_id = request.args.get('category', None, type=int)
-        if current_cat_id:
-            current_cat = Category.query.filter_by(
-                id=current_cat_id).one_or_none()
-            if current_cat == None:
+        try:
+            current_cat_id = request.args.get('category', None, type=int)
+            if current_cat_id:
+                current_cat = Category.query.filter_by(
+                    id=current_cat_id).one_or_none()
+                if current_cat == None:
+                    abort(404)
+            else:
+                current_cat = Category(type='All')
+
+            questions_data = Question.query.all()
+            categories_data = Category.query.all()
+
+            all_questions = paginate_questions(request, questions_data)
+
+            categories = {}
+            for d in categories_data:
+                categories.update({
+                    d.id: d.type
+                })
+
+            if len(all_questions) == 0:
                 abort(404)
-        else:
-            current_cat = Category(type='All')
 
-        questions_data = Question.query.all()
-        categories_data = Category.query.all()
-
-        all_questions = paginate_questions(request, questions_data)
-
-        categories = {}
-        for d in categories_data:
-            categories.update({
-                d.id: d.type
+            return jsonify({
+                'success': True,
+                'questions': all_questions,
+                'totalQuestions': len(questions_data),
+                'categories': categories,
+                'currentCategory': current_cat.type
             })
-
-        if len(all_questions) == 0:
+        except:
             abort(404)
-
-        return jsonify({
-            'success': True,
-            'questions': all_questions,
-            'totalQuestions': len(questions_data),
-            'categories': categories,
-            'currentCategory': current_cat.type
-        })
 
     """
     @TODO:
@@ -238,28 +241,32 @@ def create_app(test_config=None):
 
     @ app.route('/categories/<int:category_id>/questions')
     def get_questions_by_category(category_id):
-        current_cat_id = category_id
-        print(current_cat_id)
-        if current_cat_id:
-            current_cat = Category.query.filter_by(
-                id=current_cat_id).one_or_none()
-            if current_cat == None:
+        try:
+            current_cat_id = category_id
+            print(current_cat_id)
+            if current_cat_id:
+                current_cat = Category.query.filter_by(
+                    id=current_cat_id).one_or_none()
+                if current_cat == None:
+                    abort(404)
+            else:
+                current_cat = Category(type='All')
+
+            questions = Question.query.filter(
+                Question.category == category_id).all()
+
+            current_questions = paginate_questions(request, questions)
+            if len(current_questions) == 0:
                 abort(404)
-        else:
-            current_cat = Category(type='All')
-       
-        questions = Question.query.filter(
-            Question.category == category_id).all()
 
-        current_questions = paginate_questions(request, questions)
-        if len(current_questions) == 0:
+            return jsonify({
+                'success': True,
+                'questions': current_questions,
+                'totalQuestions': len(current_questions),
+                'currentCategory': current_cat.type
+            })
+        except:
             abort(404)
-
-        return jsonify({
-            'questions': current_questions,
-            'totalQuestions': len(current_questions),
-            'currentCategory': current_cat.type
-        })
 
     """
     @TODO:
