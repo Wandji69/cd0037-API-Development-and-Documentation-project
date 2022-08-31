@@ -66,7 +66,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "Resource Not Found")
 
+    #####################################
     # Test Get category creation
+    #####################################
+
     def test_create_get_categories(self):
         res = self.client().get("/categories")
         data = json.loads(res.data)
@@ -91,22 +94,32 @@ class TriviaTestCase(unittest.TestCase):
     #     self.assertEqual(res.status_code, 405)
     #     self.assertEqual(data["success"], False)
 
-    # def test_get_questions_categories_id(self):
-    #     res = self.client().get("/categories/3/questions")
-    #     data = json.loads(res.data)
+    #########################################
+    # Get questions by Category
+    #########################################
 
-    #     self.assertEquals(res.status_code, 200)
-    #     self.assertEquals(data["success"], True)
-    #     self.assertTrue(data["type"])
+    def test_get_questions_categories_id(self):
+        res = self.client().get("/categories/3/questions")
+        data = json.loads(res.data)
 
-    # def test_404_sent_requesting_beyond_valid_categories(self):
-    #     res = self.client().get("/categories/35/questions")
-    #     data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+        self.assertTrue(data["questions"])
+        self.assertTrue(data["currentCategory"], "All")
+        self.assertTrue(data["totalQuestions"])
 
-    #     self.assertEqual(res.status_code, 404)
-    #     self.assertEqual(data["success"], False)
+    def test_404_sent_requesting_beyond_valid_categories(self):
+        res = self.client().get(
+            "/categories/35/questions", json={"category": 35})
+        data = json.loads(res.data)
 
-# Test question creation
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Resource Not Found")
+
+    ###################################
+    # Test question creation
+    ##################################
 
     # def test_create_new_question(self):
     #     res = self.client().post("/questions", json=self.new_question)
@@ -126,7 +139,10 @@ class TriviaTestCase(unittest.TestCase):
     #     self.assertEqual(res.status_code, 405)
     #     self.assertEqual(data["success"], False)
 
+    ###################################
     # Test question deletion
+    ###################################
+
     def test_delete_question(self):
         res = self.client().delete("/questions/6")
         data = json.loads(res.data)
