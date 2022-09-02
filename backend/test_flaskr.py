@@ -1,3 +1,4 @@
+from email import message
 import os
 import re
 from unicodedata import category
@@ -27,6 +28,7 @@ class TriviaTestCase(unittest.TestCase):
             "difficulty": "4",
             "category": "3"
         }
+
         self.new_category = {
             "type": "Q&A"
         }
@@ -121,23 +123,20 @@ class TriviaTestCase(unittest.TestCase):
     # Test question creation
     ##################################
 
-    # def test_create_new_question(self):
-    #     res = self.client().post("/questions", json=self.new_question)
-    #     data = json.loads(res.data)
+    def test_create_new_question(self):
+        res = self.client().post("/questions", json=self.new_question)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 200)
-    #     self.assertEqual(data["success"], True)
-    #     self.assertTrue(data["question"])
-    #     self.assertTrue(data["answer"])
-    #     self.assertTrue(data["difficulty"])
-    #     self.assertTrue(data["category"])
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
 
-    # def test_405_if_question_creation_not_allowed(self):
-    #     res = self.client().post("/question/45", json=self.new_question)
-    #     data = json.loads(res.data)
+    def test_405_if_question_creation_not_allowed(self):
+        res = self.client().post("/questions/30", json=self.new_question)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 405)
-    #     self.assertEqual(data["success"], False)
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Method not allowed")
 
     ###################################
     # Test question deletion

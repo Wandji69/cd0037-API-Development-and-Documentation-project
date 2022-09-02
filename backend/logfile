@@ -1,0 +1,10 @@
+2022-09-01 23:42:55.732 WAT [11834] LOG:  starting PostgreSQL 14.5 (Homebrew) on x86_64-apple-darwin21.5.0, compiled by Apple clang version 13.1.6 (clang-1316.0.21.2.5), 64-bit
+2022-09-01 23:42:55.733 WAT [11834] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2022-09-01 23:42:55.734 WAT [11834] LOG:  listening on IPv6 address "::1", port 5432
+2022-09-01 23:42:55.735 WAT [11834] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2022-09-01 23:42:55.751 WAT [11835] LOG:  database system was interrupted; last known up at 2022-08-31 20:41:24 WAT
+2022-09-01 23:42:55.926 WAT [11835] LOG:  database system was not properly shut down; automatic recovery in progress
+2022-09-01 23:42:55.932 WAT [11835] LOG:  redo starts at 0/178B300
+2022-09-01 23:42:55.932 WAT [11835] LOG:  invalid record length at 0/178B3E8: wanted 24, got 0
+2022-09-01 23:42:55.932 WAT [11835] LOG:  redo done at 0/178B3B0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
+2022-09-01 23:42:55.945 WAT [11834] LOG:  database system is ready to accept connections

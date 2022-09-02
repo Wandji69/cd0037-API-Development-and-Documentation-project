@@ -157,16 +157,6 @@ def create_app(test_config=None):
 
     @ app.route('/questions', methods=['POST'])
     def create_question():
-        current_cat_id = request.args.get('category', None, type=int)
-        print(current_cat_id)
-        if current_cat_id:
-            current_cat = Category.query.filter_by(
-                id=current_cat_id).one_or_none()
-            if current_cat == None:
-                abort(404)
-        else:
-            current_cat = Category(type='All')
-
         body = request.get_json()
 
         new_question = body.get('question', None)
@@ -175,47 +165,38 @@ def create_app(test_config=None):
         new_category = body.get('category', None)
 
         try:
-            if search:
-                if search is None or '':
-                    abort(404)
+            # if search:
+            #     response = Question.query.order_by(Question.id).filter(
+            #         Question.question.ilike("%{}%".format(search))
+            #     )
 
-                response = Question.query.order_by(Question.id).filter(
-                    Question.question.ilike("%{}%".format(search)))
+            #     current_questions = paginate_questions(request, response)
 
-                questions_searched = []
-                for d in response:
-                    questions_searched.append({
-                        "id": d.id,
-                        "question": d.question,
-                        "difficulty": d.difficulty,
-                        "category": d.category
-                    })
+            #     if len(current_questions) == 0:
+            #         abort(404)
 
-                return jsonify({
-                    'success': True,
-                    'questions': questions_searched,
-                    'totalQuestions': len(questions_searched),
-                    'currentCategory': current_cat.name
+            #     return jsonify({
+            #         'success': True,
+            #         'questions': current_questions,
+            #         'totalQuestions': len(current_questions),
+            #         'currentCategory': category.name
 
-                })
+            #     })
 
-            else:
+            # else:
 
-                question = Question(
-                    question=new_question,
-                    answer=new_answer,
-                    difficulty=new_difficulty,
-                    category=new_category
-                )
-                question.insert()
+            question = Question(
+                question=new_question,
+                answer=new_answer,
+                difficulty=new_difficulty,
+                category=new_category
+            )
+            question.insert()
 
-                return jsonify({
-                    'success': True,
-                    'question': Question.id,
-                    'answer': Question.answer,
-                    'difficulty': Question.difficulty,
-                    'categories': Question.categories
-                })
+            return jsonify({
+                'success': True,
+            })
+
         except:
             abort(422)
 
