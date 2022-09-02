@@ -128,7 +128,7 @@ def create_app(test_config=None):
     This removal will persist in the database and when you refresh the page.
     """
 
-    @ app.route('/questions/<int:question_id>', methods=['DELETE'])
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
             question = Question.query.filter(
@@ -155,7 +155,7 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.
     """
 
-    @ app.route('/questions', methods=['POST'])
+    @app.route('/questions', methods=['POST'])
     def create_question():
         body = request.get_json()
 
@@ -165,37 +165,37 @@ def create_app(test_config=None):
         new_category = body.get('category', None)
 
         try:
-            # if search:
-            #     response = Question.query.order_by(Question.id).filter(
-            #         Question.question.ilike("%{}%".format(search))
-            #     )
+            if search:
+                response = Question.query.order_by(Question.id).filter(
+                    Question.question.ilike("%{}%".format(search))
+                )
 
-            #     current_questions = paginate_questions(request, response)
+                current_questions = paginate_questions(request, response)
 
-            #     if len(current_questions) == 0:
-            #         abort(404)
+                if len(current_questions) == 0:
+                    abort(404)
 
-            #     return jsonify({
-            #         'success': True,
-            #         'questions': current_questions,
-            #         'totalQuestions': len(current_questions),
-            #         'currentCategory': category.name
+                return jsonify({
+                    'success': True,
+                    'questions': current_questions,
+                    'totalQuestions': len(current_questions),
+                    'currentCategory': category.name
 
-            #     })
+                })
 
-            # else:
+            else:
 
-            question = Question(
-                question=new_question,
-                answer=new_answer,
-                difficulty=new_difficulty,
-                category=new_category
-            )
-            question.insert()
+                question = Question(
+                    question=new_question,
+                    answer=new_answer,
+                    difficulty=new_difficulty,
+                    category=new_category
+                )
+                question.insert()
 
-            return jsonify({
-                'success': True,
-            })
+                return jsonify({
+                    'success': True,
+                })
 
         except:
             abort(422)
@@ -220,7 +220,7 @@ def create_app(test_config=None):
     category to be shown.
     """
 
-    @ app.route('/categories/<int:category_id>/questions')
+    @app.route('/categories/<int:category_id>/questions')
     def get_questions_by_category(category_id):
         try:
             current_cat_id = category_id
@@ -263,19 +263,57 @@ def create_app(test_config=None):
 
     @app.route('/quizzes', methods=['POST'])
     def show_quizzes():
-        question = Question.query.get(Question).join(
-            Category).filter(Category.id).all()
+        body = request.get_json()
 
-        current_question = random(question.id) + 1
+        questions = body.get("previous_questions", None)
+        category = body.get("quiz_category", None)
+        print(questions, category)
 
-        return jsonify({
-            'previousQuestions': current_question - 1,
-            'quiz_category': question.category
-        })
+        try:
+
+            previous_questions = Question(
+                id=questions
+            )
+            previous_questions.get()
+
+            quiz_category = Question(
+                category=category
+            )
+            quiz_category.get()
+
+            question = Question.query.filter(Question.category == quiz_category).filter(
+                Question.id.not_in(previous_questions)).first()
+
+            print(question)
+
+            current_question = {
+                question
+            }
+
+            return jsonify({
+                "sucess": True,
+                "question": current_question
+            })
+        except:
+            abort(422)
 
     @app.route('/categories', methods=['POST'])
     def create_category():
-        pass
+        body = request.get_json()
+        new_type = body.get('type', None)
+
+        try:
+            category = Category(
+                type=new_type,
+            )
+            category.insert()
+
+            return jsonify({
+                'success': True,
+            })
+
+        except:
+            abort(422)
 
     """
     @TODO:

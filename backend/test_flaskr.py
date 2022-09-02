@@ -29,6 +29,14 @@ class TriviaTestCase(unittest.TestCase):
             "category": "3"
         }
 
+        self.new_quiz = {
+            'previous_questions': [4, 9],
+            'quiz_category': 'History'
+        }
+        self.wrong = {
+            'previous_questions': [],
+            'quiz_category': ''
+        }
         self.new_category = {
             "type": "Q&A"
         }
@@ -68,9 +76,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "Resource Not Found")
 
-    #####################################
-    # Test Get category creation
-    #####################################
+    # #####################################
+    # # Test GET/POST category creation
+    # #####################################
 
     def test_create_get_categories(self):
         res = self.client().get("/categories")
@@ -80,21 +88,20 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertTrue(data["categories"])
 
-    ### Not important ####
-    # def test_404_if_category_not_found(self):
-    #     res = self.client().get("/categories")
-    #     data = json.loads(res.data)
+    def test_create_new_category(self):
+        res = self.client().post("/categories", json=self.new_category)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 404)
-    #     self.assertEqual(data["success"], False)
-    #     self.assertEqual(data["message"], "Resource Not Found")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
 
-    # def test_405_if_category_creation_not_allowed(self):
-    #     res = self.client().post("/categories/45", json=self.new_category)
-    #     data = json.loads(res.data)
+    def test_404_if_category_creation_not_allowed(self):
+        res = self.client().post("/categories/45", json=self.new_category)
+        data = json.loads(res.data)
 
-    #     self.assertEqual(res.status_code, 405)
-    #     self.assertEqual(data["success"], False)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Resource Not Found")
 
     #########################################
     # Get questions by Category
@@ -162,6 +169,32 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "Unprocessable")
         self.assertEqual(question, None)
+
+#########################################
+# Test quiz Endpoint
+########################################
+    def test_get_questions_to_play_quiz(self):
+        res = self.client().post("/quizzes", json=self.new_quiz)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data["success"], True)
+
+    def test_405_if_quiz_selection_not_allowed(self):
+        res = self.client().post("/quizzes", json=self.wrong)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 405)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Method not allowed")
+
+    def test_405_if_quiz_selection_not_allowed(self):
+        res = self.client().post("/quizzes", json=self.new_quiz)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "Unprocessable")
 
     # Make the tests conveniently executable
 if __name__ == "__main__":
