@@ -8,3 +8,7 @@
 2022-09-01 23:42:55.932 WAT [11835] LOG:  invalid record length at 0/178B3E8: wanted 24, got 0
 2022-09-01 23:42:55.932 WAT [11835] LOG:  redo done at 0/178B3B0 system usage: CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s
 2022-09-01 23:42:55.945 WAT [11834] LOG:  database system is ready to accept connections
+2022-09-06 03:44:53.273 WAT [11834] LOG:  received smart shutdown request
+2022-09-06 03:44:53.276 WAT [11834] LOG:  background worker "logical replication launcher" (PID 11841) exited with exit code 1
+2022-09-06 03:44:53.276 WAT [11836] LOG:  shutting down
+2022-09-06 03:44:53.293 WAT [11834] LOG:  database system is shut down

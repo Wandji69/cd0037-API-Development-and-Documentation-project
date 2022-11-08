@@ -321,7 +321,7 @@ def create_app(test_config=None):
     including 404 and 422.
     """
 
-    @ app.errorhandler(422)
+    @app.errorhandler(422)
     def unprocessable(error):
         return jsonify({
             "success": False,
@@ -329,7 +329,7 @@ def create_app(test_config=None):
             "message": "Unprocessable"
         }), 422
 
-    @ app.errorhandler(404)
+    @app.errorhandler(404)
     def unprocessable(error):
         return jsonify({
             "success": False,
@@ -337,7 +337,7 @@ def create_app(test_config=None):
             "message": "Resource Not Found"
         }), 404
 
-    @ app.errorhandler(400)
+    @app.errorhandler(400)
     def unprocessable(error):
         return jsonify({
             "success": False,
@@ -345,7 +345,7 @@ def create_app(test_config=None):
             "message": "Bad Request"
         }), 400
 
-    @ app.errorhandler(405)
+    @app.errorhandler(405)
     def unprocessable(error):
         return jsonify({
             "success": False,
@@ -353,7 +353,7 @@ def create_app(test_config=None):
             "message": "Method not allowed"
         }), 405
 
-    @ app.errorhandler(500)
+    @app.errorhandler(500)
     def unprocessable(error):
         return jsonify({
             "success": False,
